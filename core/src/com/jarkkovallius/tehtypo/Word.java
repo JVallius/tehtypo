@@ -1,48 +1,85 @@
 package com.jarkkovallius.tehtypo;
 
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Pool;
 
 /**
+ * W
+ *
  * Created by Jarkko on 24.2.2017.
  */
 public class Word implements Pool.Poolable {
 
-    public float x, y ;
+    private String text ;
+    private float x, y ;
+    private BitmapFont font ;
+    private GlyphLayout glyphLayout ;
+    private boolean alive = false;
+    private Rectangle rectangle ;
 
-    public BitmapFont font ;
-    public String text ;
-    public GlyphLayout glyphLayout ;
+    public Rectangle getRectangle() {
+        return rectangle;
+    }
 
-    public boolean alive = false;
-
+    public void setRectangle(Rectangle rectangle) {
+        this.rectangle = rectangle;
+    }
 
     @Override
     public void reset() {
         alive = true ;
     }
 
-
-
-
-    /*
-    public void draw(SpriteBatch batch) {
-        //wordFont.draw(batch, this.text, this.x, this.y);
-        wordFont.draw(batch, glyphLayout,this.x, this.y);
-    }*/
-/*
-    @Override
-    public void draw(Batch batch, float parentAlpha) {
-        //System.out.println("drawing");
-        //super.draw(batch, parentAlpha);
-        wordFont.draw(batch, glyphLayout,this.x, this.y);
-        //batch.draw(wordFont.getRegion().);
+    public String getText() {
+        return text ;
     }
-    */
+
+    public void setText(String text) {
+        this.text = text ;
+        this.getGlyphLayout().setText(this.getFont(), this.text);
+    }
+
+    public float getX() {
+        return x;
+    }
+
+    public void setX(float x) {
+        this.x = x;
+        if (rectangle != null) this.rectangle.setX(x);
+    }
+
+    public float getY() {
+        return y;
+    }
+
+    public void setY(float y) {
+        this.y = y;
+    }
+
+    public BitmapFont getFont() {
+        return font;
+    }
+
+    public void setFont(BitmapFont font) {
+        this.font = font;
+    }
+
+
+    public GlyphLayout getGlyphLayout() {
+        return glyphLayout;
+    }
+
+    public void setGlyphLayout(GlyphLayout glyphLayout) {
+        this.glyphLayout = glyphLayout;
+    }
+
+    public boolean isAlive() {
+        return alive;
+    }
+
+    public void setAlive(boolean alive) {
+        this.alive = alive;
+    }
 }
