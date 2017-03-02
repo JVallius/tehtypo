@@ -30,6 +30,7 @@ public class Word implements Pool.Poolable {
     @Override
     public void reset() {
         alive = true ;
+
     }
 
     public String getText() {
