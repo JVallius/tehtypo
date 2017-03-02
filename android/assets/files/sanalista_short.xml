@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE kotus-sanalista SYSTEM "kotus-sanalista.dtd">
+<!--
+Copyright (C) Kotimaisten kielten tutkimuskeskus 2006
+Kotimaisten kielten tutkimuskeskuksen nykysuomen sanalista, versio 1
+Julkaistu 15.12.2006
+
+Sanalista julkaistaan GNU LGPL -lisenssillä.
+Lisenssiteksti luettavissa osoitteessa http://www.gnu.org/licenses/lgpl.html
+-->
+
+<kotus-sanalista>
+<st><s>aakkonen</s><t><tn>38</tn></t></st>
+<st><s>aakkosellinen</s><t><tn>38</tn></t></st>
+<st><s>aakkosellisesti</s><t><tn>99</tn></t></st>
+<st><s>aakkosellisuus</s><t><tn>40</tn></t></st>
+<st><s>aakkosittain</s><t><tn>99</tn></t></st>
+<st><s>aakkosjärjestys</s></st>
+<st><s>aakkosnumeerinen</s></st>
+<st><s>aakkostaa</s><t><tn>53</tn></t></st>
+<st><s>aakkosto</s><t><tn>2</tn></t></st>
+<st><s>aakkostus</s><t><tn>39</tn></t></st>
+<st><s>aalloittain</s><t><tn>99</tn></t></st>
+<st><s>aalloittainen</s><t><tn>38</tn></t></st>
+<st><s>aalloittaisuus</s><t><tn>40</tn></t></st>
+<st><s>aallokas</s><t><tn>41</tn><av>A</av></t></st>
+<st><s>aallokko</s><t><tn>4</tn><av>A</av></t></st>
+<st><s>aallonharja</s></st>
+<st><s>aallonmurtaja</s></st>
+<st><s>aallonpituus</s></st>
+<st><s>aallonpohja</s></st><st><s>öykkäri</s><t><tn>6</tn></t></st>
+<st><s>öykkärimäinen</s><t><tn>38</tn></t></st>
+<st><s>öykkärimäisesti</s><t><tn>99</tn></t></st>
+<st><s>öykkärimäisyys</s><t><tn>40</tn></t></st>
+<st><s>öykkäröidä</s><t><tn>62</tn></t></st>
+<st><s>öykkäröinti</s><t><tn>5</tn><av>J</av></t></st>
+<st><s>öylätti</s><t><tn>5</tn><av>C</av></t></st>
+</kotus-sanalista>

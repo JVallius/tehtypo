@@ -16,7 +16,7 @@ public class DesktopLauncher {
         config.samples = 4 ;
 
 
-        config.fullscreen = true ;
+        config.fullscreen = false ;
         if (!config.fullscreen) {
              config.width /= 2f ;
             config.height /= 2f ;

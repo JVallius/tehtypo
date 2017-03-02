@@ -1,6 +1,7 @@
 package com.jarkkovallius.tehtypo;
 
 import com.badlogic.gdx.*;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -18,6 +19,9 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.TimeUtils;
 
+import java.util.LinkedList;
+import java.util.List;
+
 /**
  * Teh Typo main game class
  */
@@ -29,9 +33,9 @@ public class TehTypo extends ApplicationAdapter {
     private final String TEXTFIELD_FONT_FILENAME = "roboto.ttf" ;
     private final String FONT_FOLDER = "fonts" ;
 
-    private final float VIEWPORT_HEIGHT_DIVIDER = 40f;
+    private final float VIEWPORT_HEIGHT_DIVIDER = 20f;
 
-    private long wordSpawnIntervalMilliSeconds = 20;
+    private long wordSpawnIntervalMilliSeconds = 1000;
     private float wordCurrentSpeed = 50f;
 
 
@@ -49,6 +53,7 @@ public class TehTypo extends ApplicationAdapter {
             return constructWord("", 0, 0, wordBitmapFont);
         }
     };
+    private Array<String> wordList ;
 
     private float wordHeight ;
     private float gameAreaMarginTop ;
@@ -110,6 +115,41 @@ public class TehTypo extends ApplicationAdapter {
         inputMultiplexer.addProcessor(stage);
         inputMultiplexer.addProcessor(new InputAdapter());
         Gdx.input.setInputProcessor(inputMultiplexer);
+
+
+
+
+        FileHandle file = Gdx.files.internal("files/sanalista.xml");
+        String text = file.readString();
+
+
+        wordList = new Array<String>();
+
+        //System.out.println(text.length());
+
+        String startTag = "<s>";
+        String endTag = "</s>";
+
+        int index = 0 ;
+        int wordStartIndex = 0 ;
+        int wordEndIndex = 0 ;
+
+        do {
+            index = text.indexOf(startTag, wordEndIndex) ;
+            wordStartIndex = index + startTag.length() ;
+
+            String word = "";
+            if (index != -1) {
+                wordEndIndex = text.indexOf(endTag, wordStartIndex) ;
+                 word = text.substring(wordStartIndex, wordEndIndex) ;
+                //System.out.println("SANA=" + word);
+                if ( !(String.valueOf(word.charAt(0))).equals("-") ) {
+                    wordList.add(word);
+                }
+            }
+
+        } while (index != -1);
+
 
     }
 
@@ -191,7 +231,7 @@ public class TehTypo extends ApplicationAdapter {
         // check if a new word should be spawn on the screen
         long elapsedTime = TimeUtils.timeSinceMillis(time);
         if (elapsedTime > wordSpawnIntervalMilliSeconds) {
-            if (spawnWord("SANA" + wordCounter)) {
+            if (spawnWord(getRandomWord())) {
                 wordCounter++;
                 time = TimeUtils.millis();
             }
@@ -234,6 +274,10 @@ public class TehTypo extends ApplicationAdapter {
 
 
 
+    }
+
+    private String getRandomWord() {
+        return wordList.get(MathUtils.random(0, wordList.size - 1));
     }
 
     /**
