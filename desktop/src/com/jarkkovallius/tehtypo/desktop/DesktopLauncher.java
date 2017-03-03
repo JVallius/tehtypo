@@ -1,6 +1,5 @@
 package com.jarkkovallius.tehtypo.desktop;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.jarkkovallius.tehtypo.TehTypo;
@@ -15,22 +14,12 @@ public class DesktopLauncher {
         config.resizable = false ;
         config.samples = 4 ;
 
-
         config.fullscreen = false ;
+
         if (!config.fullscreen) {
-             config.width /= 2f ;
+            config.width /= 2f ;
             config.height /= 2f ;
         }
-
-
-
-
-
-
-
-		//config.allowSoftwareMode = false ;
-
-
 
 		new LwjglApplication(new TehTypo(), config);
 	}

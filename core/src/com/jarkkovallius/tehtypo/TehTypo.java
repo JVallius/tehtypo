@@ -1,7 +1,6 @@
 package com.jarkkovallius.tehtypo;
 
 import com.badlogic.gdx.*;
-import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -21,9 +20,25 @@ import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.TimeUtils;
 
 /**
- * Teh Typo main game class
+ * Teh Typo
+ * --------
+ * By Jarkko Vallius 2017
+ *
+ *
+ * Game Description
+ * ----------------
+ * The player is trying to gain points by destroying words
+ * by writing them using a keyboard before the words reach
+ * the right side of screen.
+ *
+ * Words used in the game are loaded from a XML text file.
+ *
  */
 public class TehTypo extends ApplicationAdapter {
+
+    public static final String APPLICATION_NAME = "Teh Typo";
+    public static final String VERSION_CODE = "0.4" ;
+
 
     boolean DEBUG = false ;
 
@@ -35,7 +50,7 @@ public class TehTypo extends ApplicationAdapter {
 
     private final float VIEWPORT_HEIGHT_DIVIDER = 20f;
 
-    private long wordSpawnIntervalMilliSeconds = 1000;
+    private long wordSpawnIntervalMilliSeconds = 2000;
     private float wordCurrentSpeed = 100f;
 
     public enum GameState {STAND_BY, RUNNING, GAME_OVER} ;
@@ -91,9 +106,14 @@ public class TehTypo extends ApplicationAdapter {
     int score  ;
     int healthPoints  ;
 
+    FileHandler fileHandler ;
+
 
     @Override
     public void create() {
+
+        Gdx.graphics.setTitle(APPLICATION_NAME + " version " + VERSION_CODE);
+
         // initializing
         batch = new SpriteBatch();
         viewportWidth = Gdx.graphics.getWidth();
@@ -101,14 +121,15 @@ public class TehTypo extends ApplicationAdapter {
         camera = new OrthographicCamera(viewportWidth, viewportHeight);
         camera.setToOrtho(false);
 
-        shapeRenderer = new ShapeRenderer() ;
-        shapeRenderer.setAutoShapeType(true);
+        if (DEBUG) {
+            shapeRenderer = new ShapeRenderer() ;
+            shapeRenderer.setAutoShapeType(true);
+        }
 
         wordFontSize = (int)(viewportHeight / VIEWPORT_HEIGHT_DIVIDER) ;
         textFieldFontSize = (int)(viewportHeight / VIEWPORT_HEIGHT_DIVIDER) ;
 
         // generate BitmapFonts used in game
-
         GUIBitmapFont = generateBitmapFont(wordFontSize, FONT_FOLDER +"/" + WORD_FONT_FILENAME);
         wordBitmapFont = generateBitmapFont(wordFontSize, FONT_FOLDER +"/" + WORD_FONT_FILENAME);
         textFieldBitmapFont = generateBitmapFont(textFieldFontSize, FONT_FOLDER +"/" + TEXTFIELD_FONT_FILENAME);
@@ -128,15 +149,16 @@ public class TehTypo extends ApplicationAdapter {
         standByStage.addActor(label);
 
 
-
-
-        // GAME STAGE
         // TEXTFIELD CONSTRUCTION
-        gameStage = new Stage();
         textField = new TextField("", new TextField.TextFieldStyle(textFieldBitmapFont, Color.BLACK, null, null, null));
         textField.setX(0);
         textField.setY(20);
         textField.setWidth(viewportWidth / 2);
+        textField.setMaxLength(30); // set max word length player can type
+
+
+        // GAME STAGE
+        gameStage = new Stage();
         gameStage.addActor(textField);
         gameStage.setKeyboardFocus(textField);
 
@@ -145,10 +167,6 @@ public class TehTypo extends ApplicationAdapter {
         gameOverScoreLabel = new Label("GAME OVER", new Label.LabelStyle(GUIBitmapFont, Color.BLACK));
         gameOverStage.addActor(gameOverScoreLabel);
 
-
-
-
-
         // set multiplexer to read keyboard inputs from gameStage first
         // and then the rest inputs available from render() method
         InputMultiplexer inputMultiplexer = new InputMultiplexer();
@@ -156,68 +174,35 @@ public class TehTypo extends ApplicationAdapter {
         inputMultiplexer.addProcessor(new InputAdapter());
         Gdx.input.setInputProcessor(inputMultiplexer);
 
-
-
-
         // WORD FILE LOADING
-        FileHandle file = Gdx.files.internal("files/sanalista.xml");
-        String text = file.readString();
-        wordList = new Array<String>();
+        fileHandler = new FileHandler();
+        wordList = fileHandler.loadWordListFromXMLFile("files/sanalista.xml");
 
-        String startTag = "<s>";
-        String endTag = "</s>";
-
-        int index = 0 ;
-        int wordStartIndex = 0 ;
-        int wordEndIndex = 0 ;
-
-        do {
-            index = text.indexOf(startTag, wordEndIndex) ;
-            wordStartIndex = index + startTag.length() ;
-
-            String word = "";
-            if (index != -1) {
-                wordEndIndex = text.indexOf(endTag, wordStartIndex) ;
-                 word = text.substring(wordStartIndex, wordEndIndex) ;
-                //System.out.println("SANA=" + word);
-                if ( !(String.valueOf(word.charAt(0))).equals("-") ) {
-                    wordList.add(word);
-                }
-            }
-
-        } while (index != -1);
-
-
-        // init values
+        // set gameState to stand by
         currentGameState = GameState.STAND_BY ;
-
     }
 
+    /**
+     * Initialize everything before game goes RUNNING state
+     *
+     */
     private void init() {
         score = 0 ;
         healthPoints = HEALTH_POINTS ;
 
-        /*
-        for (int i = 0; i < activeWords.size; i++) {
-            Word word = activeWords.get(i);
-            wordPool.free(word);
-            activeWords.removeIndex(i);
-        }
-        */
-
         textField.setText("");
         time = TimeUtils.millis();
 
-
         wordPool.clear();
         activeWords.clear();
-
-
-        System.out.println("wordPool.peak=" + wordPool.peak);
-
-        System.out.println("activeWords=" + activeWords.size);
     }
 
+
+    /**
+     * Called when player submits a word
+     *
+     * @param userSubmittedWord
+     */
     private void handleWordSubmit(String userSubmittedWord) {
         for (int i = 0; i < activeWords.size; i++) {
             Word word = activeWords.get(i);
@@ -254,6 +239,7 @@ public class TehTypo extends ApplicationAdapter {
 
     /**
      * Main game loop
+     *
      */
     @Override
     public void render() {
@@ -265,6 +251,11 @@ public class TehTypo extends ApplicationAdapter {
         // update camera
         camera.update();
         batch.setProjectionMatrix(camera.combined);
+
+        // exit game if ESCAPE is pressed
+        if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
+            Gdx.app.exit();
+        }
 
 
         switch (currentGameState) {
@@ -280,6 +271,24 @@ public class TehTypo extends ApplicationAdapter {
         }
     }
 
+    /**
+     * Draw stand by screen and handle inputs
+     */
+    private void handleGameStandBy() {
+        // start game if ENTER is pressed
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
+            currentGameState = GameState.RUNNING;
+            init();
+        }
+
+        standByStage.act();
+        standByStage.draw();
+    }
+
+
+    /**
+     * Draw game over screen and handle inputs
+     */
     private void handleGameOver() {
         if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
             currentGameState = GameState.STAND_BY;
@@ -290,12 +299,11 @@ public class TehTypo extends ApplicationAdapter {
         gameOverStage.draw();
     }
 
+    /**
+     * Draw main game screen and handle inputs
+     */
     private void handleGameRunning() {
         // INPUT HANDLING
-        // exit game if ESCAPE is pressed
-        if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
-            Gdx.app.exit();
-        }
 
         // read text from textField if ENTER is pressed
         if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
@@ -378,21 +386,18 @@ public class TehTypo extends ApplicationAdapter {
 
     }
 
-    private void handleGameStandBy() {
-        // start game if ENTER is pressed
-        if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
-            currentGameState = GameState.RUNNING;
-            init();
-        }
 
-        standByStage.act();
-
-        standByStage.draw();
-    }
-
+    /**
+     * Returns a random word from wordList
+     *
+     * @return random word
+     */
     private String getRandomWord() {
         return wordList.get(MathUtils.random(0, wordList.size - 1));
     }
+
+
+
 
     /**
      * Attempt to create a new word on the left side of screen.
@@ -447,18 +452,30 @@ public class TehTypo extends ApplicationAdapter {
         word.setGlyphLayout(new GlyphLayout(word.getFont(), text));
         word.setText(text);
         word.setRectangle(new Rectangle(word.getX(), word.getY(), word.getGlyphLayout().width, word.getGlyphLayout().height));
-        word.setAlive(true);
+
         return word;
     }
 
 
+    /**
+     * Dispose everything before game is closed
+     */
     @Override
     public void dispose() {
-        batch.dispose();
+
+        // fonts
         textFieldBitmapFont.dispose();
         wordBitmapFont.dispose();
+
+        // stages
         gameStage.dispose();
-        shapeRenderer.dispose();
+        gameOverStage.dispose();
+        standByStage.dispose();
+
+        batch.dispose();
+        if (DEBUG) {
+            shapeRenderer.dispose();
+        }
 
     }
 }
