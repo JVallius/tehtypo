@@ -22,10 +22,14 @@ public class FileHandler {
     public Array<String> loadWordListFromXMLFile(String filePath) {
         FileHandle file = Gdx.files.internal(filePath);
 
+
         // if file does not exists, return null
         if (!file.exists()) {
             return null ;
         }
+
+
+
 
         // read file into String
         String text = file.readString();

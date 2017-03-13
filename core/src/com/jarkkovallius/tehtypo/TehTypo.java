@@ -37,7 +37,7 @@ import com.badlogic.gdx.utils.TimeUtils;
 public class TehTypo extends ApplicationAdapter {
 
     public static final String APPLICATION_NAME = "Teh Typo";
-    public static final String VERSION_CODE = "0.4" ;
+    public static final String VERSION_CODE = "0.5" ;
 
 
     boolean DEBUG = false ;
@@ -176,7 +176,7 @@ public class TehTypo extends ApplicationAdapter {
 
         // WORD FILE LOADING
         fileHandler = new FileHandler();
-        wordList = fileHandler.loadWordListFromXMLFile("files/sanalista.xml");
+        wordList = fileHandler.loadWordListFromXMLFile("files/kotus-sanalista_v1.xml");
 
         // set gameState to stand by
         currentGameState = GameState.STAND_BY ;
@@ -323,7 +323,7 @@ public class TehTypo extends ApplicationAdapter {
                 wordPool.free(word);
                 healthPoints-- ;
 
-                System.out.println("HEALTH POINTS LEFT " + healthPoints);
+                //System.out.println("HEALTH POINTS LEFT " + healthPoints);
 
                 // GAME STATE TO GAME OVER
                 if (healthPoints <= 0) {
@@ -419,7 +419,7 @@ public class TehTypo extends ApplicationAdapter {
         boolean isOverlapping = false;
         for (Word w : activeWords) {
             if (w.getRectangle().overlaps(word.getRectangle())) {
-                System.out.println("Overlapping!");
+                //System.out.println("Overlapping!");
                 isOverlapping = true ;
                 break ;
             }

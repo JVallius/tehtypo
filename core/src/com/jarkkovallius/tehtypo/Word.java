@@ -24,7 +24,7 @@ public class Word implements Pool.Poolable {
     /**
      * Get the rectangle surrounding the word
      *
-     * @return
+     * @return Rectangle object
      */
     public Rectangle getRectangle() {
         return rectangle;
@@ -33,7 +33,7 @@ public class Word implements Pool.Poolable {
     /**
      * Set the rectangle surrounding the word
      *
-     * @param rectangle
+     * @param rectangle Rectangle object
      */
     public void setRectangle(Rectangle rectangle) {
         this.rectangle = rectangle;
@@ -53,7 +53,7 @@ public class Word implements Pool.Poolable {
      *
      * GlyphLayout is also updated to correspond the new text
      *
-     * @param text
+     * @param text String new text
      */
     public void setText(String text) {
         this.text = text ;
@@ -131,7 +131,7 @@ public class Word implements Pool.Poolable {
     /**
      * Set the word's GlyphLayout object
      *
-     * @param glyphLayout
+     * @param glyphLayout GlyphLayout object
      */
     public void setGlyphLayout(GlyphLayout glyphLayout) {
         this.glyphLayout = glyphLayout;
